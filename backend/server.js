@@ -25,16 +25,15 @@ app.get("/", (req,res)=>{
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, ()=>{
-    console.log(`Servidor corriendo en puerto ${PORT}`);
-});
-
 const libroRoutes = require("./routes/libroRoutes");
 app.use("/api/libros", libroRoutes);
-
 
 const usuarioRoutes = require("./routes/usuarioRoutes");
 app.use("/api/usuarios", usuarioRoutes);
 
 const pedidoRoutes = require("./routes/pedidoRoutes");
 app.use("/api/pedidos", pedidoRoutes);
+
+app.listen(PORT, ()=>{
+    console.log(`Servidor corriendo en puerto ${PORT}`);
+});
