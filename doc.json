@@ -1,0 +1,129 @@
+[
+    {
+        "titulo": "Crimen y Castigo",
+        "autor": "Fiódor Dostoyevski",
+        "genero": "Drama psicológico",
+        "categoria": "Novela",
+        "precio": 69.90,
+        "descripcion": "Una obra clásica que explora la culpa, la moral y la redención a través de la vida de Rodión Raskólnikov.",
+        "imagen": "/images/crimencastigo.jpg",
+        "pdf": "/pdf/crimencastigo.pdf",
+        "stock": 12,
+        "paginas": 496,
+        "isbn": "9780143058144",
+        "anio": 1866,
+        "comentatios": []
+    },
+
+    {
+        "titulo": "Don Quijote de la Mancha",
+        "autor": "Miguel de Cervantes",
+        "genero": "Aventura",
+        "categoria": "Novela",
+        "precio": 74.90,
+        "descripcion": "Las aventuras del ingenioso hidalgo Don Quijote y su fiel escudero Sancho Panza en una de las obras más importantes de la literatura universal.",
+        "imagen": "/images/donquijote.jpg",
+        "pdf": "/pdf/donquijote.pdf",
+        "stock": 10,
+        "paginas": 471,
+        "isbn": "9788420412146",
+        "anio": 1605,
+        "comentatios": []
+    },
+
+    {
+        "titulo": "El Libro de la Selva",
+        "autor": "Rudyard Kipling",
+        "genero": "Aventura",
+        "categoria": "Cuento Infantil",
+        "precio": 44.90,
+        "descripcion": "La historia de Mowgli, un niño criado por lobos en la selva india junto a personajes memorables como Baloo y Bagheera.",
+        "imagen": "/images/libroselva.webp",
+        "pdf": "/pdf/libroselva.pdf",
+        "stock": 22,
+        "paginas": 374,
+        "isbn": "9788497945805",
+        "anio": 1894,
+        "comentatios": []
+    },
+
+    {
+        "titulo": "El Mago de Oz",
+        "autor": "L. Frank Baum",
+        "genero": "Fantasía",
+        "categoria": "Cuento Infantil",
+        "precio": 46.90,
+        "descripcion": "Dorothy y su perro Toto son transportados mágicamente al mundo de Oz donde conocerán nuevos amigos y vivirán grandes aventuras.",
+        "imagen": "/images/magodeoz.webp",
+        "pdf": "/pdf/magodeoz.pdf",
+        "stock": 17,
+        "paginas": 275,
+        "isbn": "9788426137159",
+        "anio": 1900,
+        "comentatios": []
+    },
+
+    {
+        "titulo": "Orgullo y Prejuicio",
+        "autor": "Jane Austen",
+        "genero": "Romance",
+        "categoria": "Novela",
+        "precio": 59.90,
+        "descripcion": "La historia de Elizabeth Bennet y el señor Darcy en una crítica elegante a la sociedad inglesa del siglo XIX.",
+        "imagen": "/images/orgulloprejuicio.webp",
+        "pdf": "/pdf/orgulloprejuicio.pdf",
+        "stock": 14,
+        "paginas": 260,
+        "isbn": "9780141439518",
+        "anio": 1813,
+        "comentatios": []
+    },
+
+    {
+        "titulo": "Guía de Empleabilidad y Desarrollo Profesional",
+        "autor": "Senati",
+        "genero": "Educativo",
+        "categoria": "Guía",
+        "precio": 35.00,
+        "descripcion": "Material orientado al fortalecimiento de habilidades profesionales, empleabilidad y preparación para el entorno laboral.",
+        "imagen": "/images/empleabilidad.png",
+        "pdf": "/pdf/empleabilidad.pdf",
+        "stock": 34,
+        "paginas": 140,
+        "isbn": "9789999991001",
+        "anio": 2023,
+        "comentatios": []
+    },
+
+    {
+        "titulo": "Guía de Calidad Total",
+        "autor": "Senati",
+        "genero": "Educativo",
+        "categoria": "Guía",
+        "precio": 38.00,
+        "descripcion": "Guía enfocada en principios de calidad total, mejora continua y gestión eficiente dentro de organizaciones.",
+        "imagen": "/images/calidad.png",
+        "pdf": "/pdf/calidad.pdf",
+        "stock": 20,
+        "paginas": 61,
+        "isbn": "9789999991002",
+        "anio": 2023,
+        "comentatios": []
+    },
+
+    {
+        "titulo": "Guía de Desarrollo de Aplicaciones Web",
+        "autor": "Senati",
+        "genero": "Tecnología",
+        "categoria": "Guía",
+        "precio": 45.00,
+        "descripcion": "Material educativo sobre desarrollo web moderno utilizando tecnologías frontend y backend.",
+        "imagen": "/images/aplicaciones.png",
+        "pdf": "/pdf/aplicaciones.pdf",
+        "stock": 30,
+        "paginas": 54,
+        "isbn": "9789999991003",
+        "anio": 2024,
+        "comentatios": []
+    }
+]
