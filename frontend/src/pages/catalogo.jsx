@@ -141,7 +141,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
         if (pagina === "admin") {
             cargarAdminDatos();
         }
-    }, [pagina, libroActivo]);
+    }, [pagina, libroActivo,cargarAdminDatos]);
 
     const cargarAdminDatos = async () => {
         if (usuario?.rol !== "admin") return;
@@ -172,7 +172,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
     useEffect(() => {
         cargarMisLibros();
-    }, [usuario]);
+    }, [usuario,cargarMisLibros]);
 
     const yaComprado = (libro) => misLibros.some((l) => String(l._id) === String(libro._id));
 
