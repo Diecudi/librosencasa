@@ -1,0 +1,18 @@
+# Dependencias
+node_modules/
+
+# Variables privadas
+.env
+backend/.env
+frontend/.env
+
+# Build
+build/
+dist/
+
+# Logs
+npm-debug.log*
+
+# Archivos sistema
+.DS_Store
+Thumbs.db
