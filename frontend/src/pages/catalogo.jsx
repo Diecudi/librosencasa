@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback} from "react";
 import axios from "axios";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.entry";
@@ -134,16 +134,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
         .catch(() => setEstado("Error al cargar los libros de la base de datos"));
     }, []);
 
-    useEffect(() => {
-        if (pagina === "detalle" && libroActivo) {
-            cargarComentarios(libroActivo._id);
-        }
-        if (pagina === "admin") {
-            cargarAdminDatos();
-        }
-    }, [pagina, libroActivo,cargarAdminDatos]);
-
-    const cargarAdminDatos = async () => {
+    const cargarAdminDatos = useCallback(async () => {
         if (usuario?.rol !== "admin") return;
         try {
             const [resUsuarios, resPedidos, resLibros] = await Promise.all([
@@ -157,7 +148,18 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
         } catch (error) {
             console.error("Error al cargar datos del panel de administrador", error);
         }
-    };
+    }, [usuario]);
+
+    useEffect(() => {
+        if (pagina === "detalle" && libroActivo) {
+            cargarComentarios(libroActivo._id);
+        }
+        if (pagina === "admin") {
+            cargarAdminDatos();
+        }
+    }, [pagina, libroActivo, cargarAdminDatos]);
+
+    
 
     const cargarMisLibros = async () => {
         if (!usuario) return;
