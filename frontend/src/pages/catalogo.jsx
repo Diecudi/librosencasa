@@ -161,7 +161,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
     
 
-    const cargarMisLibros = async () => {
+    const cargarMisLibros = useCallback(async () => {
         if (!usuario) return;
         try {
             const id = usuario.id || usuario._id;
@@ -170,7 +170,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
         } catch (error) {
             console.error("Error al cargar mis libros", error);
         }
-    };
+    });
 
     useEffect(() => {
         cargarMisLibros();
