@@ -170,7 +170,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
         } catch (error) {
             console.error("Error al cargar mis libros", error);
         }
-    }, [usuario]);
+    };
 
     useEffect(() => {
         cargarMisLibros();
