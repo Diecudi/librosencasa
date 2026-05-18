@@ -20,7 +20,7 @@ conectarDB();
 
 
 app.use(cors({
-    origin: "https://librosencasa.onrender.com",
+    origin: "https://librosencasa.vercel.app",
     credentials: true
 }));
 app.use(express.json());
