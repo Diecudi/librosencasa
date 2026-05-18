@@ -31,7 +31,7 @@ const obtenerPedido = async (req, res) => {
 
 const actualizarPedido = async (req, res) => {
     try {
-        const pedidoActualizado = await Pedido.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const pedidoActualizado = await Pedido.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
         if (!pedidoActualizado) return res.status(404).json({ msg: "Pedido no encontrado" });
         res.json(pedidoActualizado);
     } catch (error) {

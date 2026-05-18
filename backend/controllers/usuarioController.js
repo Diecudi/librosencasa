@@ -244,7 +244,7 @@ const obtenerUsuario = async (req, res) => {
 const actualizarUsuario = async (req, res) => {
     try {
         const { password, ...datosActualizar } = req.body;
-        const usuarioActualizado = await Usuario.findByIdAndUpdate(req.params.id, datosActualizar, { new: true }).select("-password");
+        const usuarioActualizado = await Usuario.findByIdAndUpdate(req.params.id, datosActualizar, { returnDocument: 'after' }).select("-password");
         if (!usuarioActualizado) return res.status(404).json({ msg: "Usuario no encontrado" });
         res.json(usuarioActualizado);
     } catch (error) {
@@ -285,7 +285,9 @@ const comprarLibros = async (req, res) => {
 
         // Configuración de Nodemailer (asegúrate de usar variables de entorno para esto en producción)
         const transporter = nodemailer.createTransport({
-            service: "gmail",
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
             auth: {
                 user: process.env.SMTP_USER || "tu_correo@gmail.com",
                 pass: process.env.SMTP_PASS || "tu_contraseña_de_aplicacion"
@@ -403,7 +405,7 @@ const editarComentario = async (req, res) => {
         const comentarioActualizado = await Comentario.findByIdAndUpdate(
             id,
             { valoracion, review, fecha: Date.now() },
-            { new: true }
+            { returnDocument: 'after' }
         );
         if (!comentarioActualizado) return res.status(404).json({ msg: "Comentario no encontrado" });
         

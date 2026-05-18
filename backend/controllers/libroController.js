@@ -31,7 +31,7 @@ exports.obtenerLibro = async(req,res)=>{
 
 exports.actualizarLibro = async(req,res)=>{
     try {
-        const libroActualizado = await Libro.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const libroActualizado = await Libro.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
         if (!libroActualizado) return res.status(404).json({ msg: "Libro no encontrado" });
         res.json(libroActualizado);
     } catch (error) {
