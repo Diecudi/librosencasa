@@ -310,9 +310,11 @@ const comprarLibros = async (req, res) => {
         }
 
         // 3. Intentamos enviar el correo
+        const remitente = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+
         try {
             const data = await resend.emails.send({
-                from: "Libros en Casa <onboarding@resend.dev>",
+                from: `Libros en Casa <${remitente}>`,
                 to: email,
                 subject: "¡Aquí tienes tus libros digitales comprados! 📚",
                 html: `<p>Hola,</p><p>¡Gracias por tu compra en Libros en Casa!</p><p>Adjuntamos a este correo los archivos PDF de los libros que acabas de adquirir para que puedas disfrutarlos de inmediato.</p><p>¡Feliz lectura!</p>`,
