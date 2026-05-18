@@ -310,7 +310,7 @@ const comprarLibros = async (req, res) => {
         }
 
         // 3. Intentamos enviar el correo
-        const remitente = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+        const remitente = process.env.RESEND_FROM_EMAIL || "diegocuchodiaz151617@gmail.com";
 
         try {
             const data = await resend.emails.send({
