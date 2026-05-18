@@ -3,7 +3,7 @@ import axios from "axios";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.entry";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_URL = process.env.REACT_APP_API_URL || "https://librosencasa-backend.onrender.com";
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
     function normalizarRuta(ruta, carpeta) {
