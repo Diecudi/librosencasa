@@ -316,6 +316,13 @@ const comprarLibros = async (req, res) => {
             await nuevoPedido.save();
         }
 
+        // Generar lista de enlaces para incluirlos directamente en el cuerpo del correo
+        const baseUrl = process.env.API_URL || "https://librosencasa.onrender.com";
+        const listaEnlaces = items.map(item => {
+            const urlDescarga = item.pdf.startsWith("http") ? item.pdf : `${baseUrl}${item.pdf}`;
+            return `<li><strong>${item.titulo}</strong>: <a href="${urlDescarga}" target="_blank">Leer / Descargar</a></li>`;
+        }).join("");
+
         // 3. Intentamos enviar el correo
         const remitente = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 
@@ -324,7 +331,12 @@ const comprarLibros = async (req, res) => {
                 from: `Libros en Casa <${remitente}>`,
                 to: email,
                 subject: "¡Aquí tienes tus libros digitales comprados! 📚",
-                html: `<p>Hola,</p><p>¡Gracias por tu compra en Libros en Casa!</p><p>Adjuntamos a este correo los archivos PDF de los libros que acabas de adquirir para que puedas disfrutarlos de inmediato.</p><p>¡Feliz lectura!</p>`,
+                html: `<p>Hola,</p>
+                       <p>¡Gracias por tu compra en Libros en Casa!</p>
+                       <p>A continuación, te dejamos los enlaces directos para que puedas acceder a tus libros de inmediato:</p>
+                       <ul>${listaEnlaces}</ul>
+                       <p>También intentamos adjuntar los archivos a este correo (si el tamaño lo permite).</p>
+                       <p>¡Feliz lectura!</p>`,
                 attachments
             });
 
