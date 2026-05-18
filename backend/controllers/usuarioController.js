@@ -294,10 +294,17 @@ const comprarLibros = async (req, res) => {
             if (esUrl) {
                 return { filename: `${item.titulo}.pdf`, path: item.pdf };
             } else {
-                // Resend necesita el contenido en formato Buffer para archivos locales
-                return { filename: `${item.titulo}.pdf`, content: fs.readFileSync(path.join(__dirname, "../public", item.pdf)) };
+                const filePath = path.join(__dirname, "../public", item.pdf);
+                
+                // Comprobamos si el archivo existe en el servidor para evitar que tumbe la app (Error 500)
+                if (fs.existsSync(filePath)) {
+                    return { filename: `${item.titulo}.pdf`, content: fs.readFileSync(filePath) };
+                } else {
+                    console.error(`⚠️ Archivo PDF no encontrado en el servidor: ${filePath}`);
+                    return null; // Omitimos este archivo
+                }
             }
-        });
+        }).filter(attachment => attachment !== null); // Filtramos los nulos
 
         // 2. Guardamos la compra en la base de datos PRIMERO
         if (usuarioId) {
