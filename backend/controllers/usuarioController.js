@@ -289,22 +289,12 @@ const comprarLibros = async (req, res) => {
         const resend = new Resend(process.env.RESEND_API_KEY);
 
         // Mapear los archivos de la compra para adjuntarlos
+        const frontendUrl = process.env.CLIENT_URL || "https://librosencasa.vercel.app";
         const attachments = items.map((item) => {
-            const esUrl = item.pdf && item.pdf.startsWith("http");
-            if (esUrl) {
-                return { filename: `${item.titulo}.pdf`, path: item.pdf };
-            } else {
-                const filePath = path.join(__dirname, "../public", item.pdf);
-                
-                // Comprobamos si el archivo existe en el servidor para evitar que tumbe la app (Error 500)
-                if (fs.existsSync(filePath)) {
-                    return { filename: `${item.titulo}.pdf`, content: fs.readFileSync(filePath) };
-                } else {
-                    console.error(`⚠️ Archivo PDF no encontrado en el servidor: ${filePath}`);
-                    return null; // Omitimos este archivo
-                }
-            }
-        }).filter(attachment => attachment !== null); // Filtramos los nulos
+            // Como los PDFs están en Vercel, usamos la URL pública para que Resend los descargue y adjunte
+            const pdfUrl = item.pdf.startsWith("http") ? item.pdf : `${frontendUrl}${item.pdf}`;
+            return { filename: `${item.titulo}.pdf`, path: pdfUrl };
+        });
 
         // 2. Guardamos la compra en la base de datos PRIMERO
         if (usuarioId) {
@@ -317,9 +307,8 @@ const comprarLibros = async (req, res) => {
         }
 
         // Generar lista de enlaces para incluirlos directamente en el cuerpo del correo
-        const baseUrl = process.env.API_URL || "https://librosencasa.onrender.com";
         const listaEnlaces = items.map(item => {
-            const urlDescarga = item.pdf.startsWith("http") ? item.pdf : `${baseUrl}${item.pdf}`;
+            const urlDescarga = item.pdf.startsWith("http") ? item.pdf : `${frontendUrl}${item.pdf}`;
             return `<li><strong>${item.titulo}</strong>: <a href="${urlDescarga}" target="_blank">Leer / Descargar</a></li>`;
         }).join("");
 
