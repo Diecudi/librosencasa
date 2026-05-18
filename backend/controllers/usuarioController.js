@@ -293,10 +293,13 @@ const comprarLibros = async (req, res) => {
         });
 
         // Mapear los archivos de la compra para adjuntarlos
-        const attachments = items.map((item) => ({
-            filename: `${item.titulo}.pdf`,
-            path: path.join(__dirname, "../public", item.pdf) 
-        }));
+        const attachments = items.map((item) => {
+            const esUrl = item.pdf && item.pdf.startsWith("http");
+            return {
+                filename: `${item.titulo}.pdf`,
+                path: esUrl ? item.pdf : path.join(__dirname, "../public", item.pdf) 
+            };
+        });
 
         const mailOptions = {
             from: process.env.SMTP_FROM || `"Libros en Casa" <${process.env.SMTP_USER}>`,
