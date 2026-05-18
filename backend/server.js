@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config({ path: "./backend/.env" });
+require("dotenv").config();
 
 const app = express();
 
@@ -20,7 +20,7 @@ conectarDB();
 
 
 app.use(cors({
-    origin: process.env.CLIENT_URL || "https://librosencasa-backend.onrender.com",
+    origin: "https://librosencasa.onrender.com",
     credentials: true
 }));
 app.use(express.json());
