@@ -5,6 +5,23 @@ require("dotenv").config({ path: "./backend/.env" });
 
 const app = express();
 
+const conectarDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log("✅ Conexión exitosa a MongoDB Atlas");
+    } catch (error) {
+        console.error("❌ Error al conectar a MongoDB:", error.message);
+        process.exit(1); // Detiene la aplicación si hay error
+    }
+};
+
+// Ejecutamos la función para que se conecte al arrancar el servidor
+conectarDB();
+
+
 app.use(cors({
     origin: process.env.CLIENT_URL || "http://localhost:3000",
     credentials: true
@@ -15,9 +32,9 @@ app.use("/pdf", express.static("public/pdf"));
 
 console.log(process.env.MONGO_URI);
 
-mongoose.connect(process.env.MONGO_URI)
-.then(()=> console.log("MongoDB conectado"))
-.catch(err => console.log(err));
+//mongoose.connect(process.env.MONGO_URI)
+//.then(()=> console.log("MongoDB conectado"))
+//.catch(err => console.log(err));
 
 app.get("/", (req,res)=>{
     res.send("Servidor funcionando");
