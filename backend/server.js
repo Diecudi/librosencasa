@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
+// Forzar la resolución DNS a IPv4 para evitar el error ENETUNREACH en Render
+require("dns").setDefaultResultOrder("ipv4first");
+
 const app = express();
 
 const conectarDB = async () => {

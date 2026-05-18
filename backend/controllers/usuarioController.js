@@ -291,7 +291,8 @@ const comprarLibros = async (req, res) => {
             auth: {
                 user: process.env.SMTP_USER || "tu_correo@gmail.com",
                 pass: process.env.SMTP_PASS || "tu_contraseña_de_aplicacion"
-            }
+            },
+            family: 4 // Fuerza estrictamente el uso de IPv4 (soluciona ENETUNREACH y timeouts 502 en Render)
         });
 
         // Mapear los archivos de la compra para adjuntarlos
