@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const fs = require("fs");
+const { Resend } = require("resend");
 const path = require("path");
 const { enviarCorreoRecuperacion } = require("../services/emailService");
 const Comentario = require("../models/Comentario");
@@ -283,38 +285,21 @@ const comprarLibros = async (req, res) => {
             }
         }
 
-        // Configuración de Nodemailer (asegúrate de usar variables de entorno para esto en producción)
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 465,
-            secure: true,
-            auth: {
-                user: process.env.SMTP_USER || "tu_correo@gmail.com",
-                pass: process.env.SMTP_PASS || "tu_contraseña_de_aplicacion"
-            },
-            family: 4 // Fuerza estrictamente el uso de IPv4 (soluciona ENETUNREACH y timeouts 502 en Render)
-        });
+        // Configuración de Resend
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
         // Mapear los archivos de la compra para adjuntarlos
         const attachments = items.map((item) => {
             const esUrl = item.pdf && item.pdf.startsWith("http");
-            return {
-                filename: `${item.titulo}.pdf`,
-                path: esUrl ? item.pdf : path.join(__dirname, "../public", item.pdf) 
-            };
+            if (esUrl) {
+                return { filename: `${item.titulo}.pdf`, path: item.pdf };
+            } else {
+                // Resend necesita el contenido en formato Buffer para archivos locales
+                return { filename: `${item.titulo}.pdf`, content: fs.readFileSync(path.join(__dirname, "../public", item.pdf)) };
+            }
         });
 
-        const mailOptions = {
-            from: process.env.SMTP_FROM || `"Libros en Casa" <${process.env.SMTP_USER}>`,
-            to: email,
-            subject: "¡Aquí tienes tus libros digitales comprados! 📚",
-            text: `Hola,\n\n¡Gracias por tu compra en Libros en Casa!\n\nAdjuntamos a este correo los archivos PDF de los libros que acabas de adquirir para que puedas disfrutarlos de inmediato.\n\n¡Feliz lectura!`,
-            attachments
-        };
-
-        await transporter.sendMail(mailOptions);
-
-        // 2. Guardamos la compra exitosa en la base de datos
+        // 2. Guardamos la compra en la base de datos PRIMERO
         if (usuarioId) {
             const nuevoPedido = new Pedido({
                 usuario: usuarioId,
@@ -324,7 +309,26 @@ const comprarLibros = async (req, res) => {
             await nuevoPedido.save();
         }
 
-        res.json({ msg: "Compra exitosa, archivos enviados" });
+        // 3. Intentamos enviar el correo
+        try {
+            const data = await resend.emails.send({
+                from: "Libros en Casa <onboarding@resend.dev>",
+                to: email,
+                subject: "¡Aquí tienes tus libros digitales comprados! 📚",
+                html: `<p>Hola,</p><p>¡Gracias por tu compra en Libros en Casa!</p><p>Adjuntamos a este correo los archivos PDF de los libros que acabas de adquirir para que puedas disfrutarlos de inmediato.</p><p>¡Feliz lectura!</p>`,
+                attachments
+            });
+
+            if (data.error) {
+                console.error("Error de Resend:", data.error);
+                return res.json({ msg: "¡Compra exitosa! Ya puedes leer el libro en 'Usuario > Tu Biblioteca'. (El correo no se pudo enviar)." });
+            }
+
+            res.json({ msg: "Compra exitosa, archivos enviados por correo." });
+        } catch (emailError) {
+            console.error("Error al enviar con Resend:", emailError.message);
+            res.json({ msg: "¡Compra exitosa! Ya puedes leer el libro en 'Usuario > Tu Biblioteca'. (Nota: Hubo un fallo al enviar el correo)." });
+        }
     } catch (error) {
         console.error("Error al enviar correos con PDFs:", error);
         res.status(500).json({ msg: "Error al procesar la compra", error });
