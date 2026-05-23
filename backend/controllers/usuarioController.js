@@ -297,9 +297,10 @@ const comprarLibros = async (req, res) => {
             return res.json({ msg: "¡Compra exitosa! Ya puedes leer el libro en 'Usuario > Tu Biblioteca'. (El envío por correo no está configurado)." });
         }
 
-        // Configuración de Nodemailer con Gmail
+        // Configuración de Nodemailer con Mailtrap (o servicio SMTP genérico)
         const transporter = nodemailer.createTransport({
-            service: "gmail",
+            host: process.env.EMAIL_HOST || "sandbox.smtp.mailtrap.io",
+            port: process.env.EMAIL_PORT || 2525,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
