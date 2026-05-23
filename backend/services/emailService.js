@@ -7,17 +7,15 @@ try {
 }
 
 const crearTransporter = () => {
-    if (!nodemailer || !process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    if (!nodemailer || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
         return null;
     }
 
     return nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT || 587),
-        secure: process.env.SMTP_SECURE === "true",
+        service: "gmail",
         auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
         }
     });
 };
@@ -34,7 +32,7 @@ const enviarCorreoRecuperacion = async ({ email, nombre, resetLink }) => {
     }
 
     await transporter.sendMail({
-        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+        from: `"Libros en Casa" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: "Restablecer contraseña - Libros en Casa",
         html: `

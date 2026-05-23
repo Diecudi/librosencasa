@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-// Forzar la resolución DNS a IPv4 para evitar el error ENETUNREACH en Render
 require("dns").setDefaultResultOrder("ipv4first");
 
 const app = express();
@@ -14,7 +13,7 @@ const conectarDB = async () => {
         console.log("✅ Conexión exitosa a MongoDB Atlas");
     } catch (error) {
         console.error("❌ Error al conectar a MongoDB:", error.message);
-        process.exit(1); // Detiene la aplicación si hay error
+        process.exit(1);
     }
 };
 

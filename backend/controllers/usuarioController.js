@@ -51,7 +51,6 @@ const registrarUsuario = async (req,res)=>{
 
             nombre,
             email,
-
             password: passwordHash,
 
             rol: rol || "usuario",
@@ -73,9 +72,7 @@ const registrarUsuario = async (req,res)=>{
         });
 
     }catch(error){
-
         res.status(500).json(error);
-
     }
 
 }
@@ -285,17 +282,6 @@ const comprarLibros = async (req, res) => {
             }
         }
 
-        // Configuración de Resend
-        const resend = new Resend(process.env.RESEND_API_KEY);
-
-        // Mapear los archivos de la compra para adjuntarlos
-        const frontendUrl = process.env.CLIENT_URL || "https://librosencasa.vercel.app";
-        const attachments = items.map((item) => {
-            // Como los PDFs están en Vercel, usamos la URL pública para que Resend los descargue y adjunte
-            const pdfUrl = item.pdf.startsWith("http") ? item.pdf : `${frontendUrl}${item.pdf}`;
-            return { filename: `${item.titulo}.pdf`, path: pdfUrl };
-        });
-
         // 2. Guardamos la compra en la base de datos PRIMERO
         if (usuarioId) {
             const nuevoPedido = new Pedido({
@@ -306,25 +292,48 @@ const comprarLibros = async (req, res) => {
             await nuevoPedido.save();
         }
 
-        // 3. Intentamos enviar el correo
-        const remitente = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+        // Si no están configuradas las credenciales de correo, evitamos que el backend falle y terminamos la compra aquí
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+            return res.json({ msg: "¡Compra exitosa! Ya puedes leer el libro en 'Usuario > Tu Biblioteca'. (El envío por correo no está configurado)." });
+        }
+
+        // Configuración de Nodemailer con Gmail
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
+
+        // Mapear los archivos de la compra para adjuntarlos
+        const frontendUrl = process.env.CLIENT_URL || "https://librosencasa.vercel.app";
+        const attachments = items.map((item) => {
+            // Como los PDFs están en Vercel, usamos la URL pública para que Resend los descargue y adjunte
+            const pdfUrl = item.pdf.startsWith("http") ? item.pdf : `${frontendUrl}${item.pdf}`;
+            return { filename: `${item.titulo}.pdf`, path: pdfUrl };
+        });
+
+        // Generar lista de enlaces para incluirlos directamente en el cuerpo del correo
+        const listaEnlaces = items.map(item => {
+            const urlDescarga = item.pdf.startsWith("http") ? item.pdf : `${frontendUrl}${item.pdf}`;
+            return `<li><strong>${item.titulo}</strong>: <a href="${urlDescarga}" target="_blank">Leer / Descargar</a></li>`;
+        }).join("");
 
         try {
-            const data = await resend.emails.send({
-                from: `Libros en Casa <${remitente}>`,
+            // 3. Intentamos enviar el correo con Nodemailer
+            await transporter.sendMail({
+                from: `"Libros en Casa" <${process.env.EMAIL_USER}>`,
                 to: email,
                 subject: "¡Aquí tienes tus libros digitales comprados! 📚",
                 html: `<p>Hola,</p>
                        <p>¡Gracias por tu compra en Libros en Casa!</p>
-                       <p>Adjuntamos a este correo los archivos PDF físicos de los libros que acabas de adquirir para que puedas descargarlos de inmediato.</p>
+                       <p>A continuación, te dejamos los enlaces directos para que puedas acceder a tus libros de inmediato:</p>
+                       <ul>${listaEnlaces}</ul>
+                       <p>También intentamos adjuntar los archivos a este correo (si el tamaño lo permite).</p>
                        <p>¡Feliz lectura!</p>`,
                 attachments
             });
-
-            if (data.error) {
-                console.error("Error de Resend:", data.error);
-                return res.json({ msg: "¡Compra exitosa! Ya puedes leer el libro en 'Usuario > Tu Biblioteca'. (El correo no se pudo enviar)." });
-            }
 
             res.json({ msg: "Compra exitosa, archivos enviados por correo." });
         } catch (emailError) {
